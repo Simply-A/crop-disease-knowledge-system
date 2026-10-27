@@ -12,13 +12,14 @@
 
 ## 阶段 2：病害检测
 
-- [ ] 确认公开数据集来源、许可和类别映射
-- [ ] 编写数据检查与训练/验证/测试划分脚本
-- [ ] 建立可复现的 YOLO 基线
-- [ ] 记录 mAP@50、mAP@50-95、Precision、Recall
-- [ ] 分别验证小目标检测层、注意力模块等改动
+- [x] 确认公开数据集来源、许可和类别映射（番茄田间病害集 tomato_det，7 类，CC BY 4.0）
+- [x] 编写数据检查与训练/验证/测试划分脚本（training/scripts/prepare_data.py）
+- [x] 建立可复现的 YOLO 基线（YOLOv8n，mAP50=0.729 / mAP50-95=0.451）
+- [x] 记录 mAP@50、mAP@50-95、Precision、Recall
+- [x] 实现三处改进：P2 小目标层 / CBAM 注意力 / Ghost 轻量骨干（training/models/）
+- [ ] 完成五组消融实验训练与指标对比（进行中）
 - [ ] 保存实验配置、日志和错误样本分析
-- [ ] 实现模型加载与图片推理 API
+- [x] 实现图片推理脚本（training/scripts/infer.py）；检测 API 待阶段 5 接入后端
 
 ## 阶段 3：农业知识检索
 

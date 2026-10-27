@@ -1,0 +1,32 @@
+# 多模态 RAG 农艺知识库 —— 依赖清单
+# 安装：pip install -r requirements.txt
+#
+# 注意：torch 请按本机 CUDA 版本单独安装，例如
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+# 直接 pip install torch 装到的是 CPU 版，编码速度会慢很多。
+
+# 向量库
+chromadb>=0.5.0
+
+# 文本编码（bge 系列）
+sentence-transformers>=3.0.0
+
+# 图像编码（CLIP）
+transformers>=4.40.0
+torch>=2.1.0
+
+# 图像处理
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# 知识文档元数据解析
+PyYAML>=6.0
+
+# 接口服务
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+pydantic>=2.6.0
+
+# 调用本地大模型（Ollama HTTP 接口）
+requests>=2.31.0

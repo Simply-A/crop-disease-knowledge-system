@@ -2,7 +2,15 @@
 
 面向计算机视觉与大模型应用的项目实践：计划整合农作物病害目标检测、农业知识检索和可追溯问答服务。
 
-> **项目状态：开发脚手架阶段。** 当前仓库包含基础后端、环境依赖与开发路线；模型权重、训练结果、知识库数据和完整前端尚未提交。请勿将计划中的功能当作已完成成果。
+> **项目状态：开发中。** 已完成：基础后端（FastAPI + 测试 + CI）、检测训练模块（YOLOv8n 基线 + 三处改进 + 消融实验）、图文双模态 RAG 知识库。数据集与模型权重不提交（体积大，走本地 D 盘）；前端待开发。请勿将计划中的功能当作已完成成果。
+
+## 改进方案（消融实验）
+
+| 编号 | 改进 | 落点 | 参数量变化 |
+|---|---|---|---|
+| ① | CBAM 注意力 | 颈部 P3/P4/P5 特征 | +0.35% |
+| ② | P2 小目标检测层 | 检测头新增 1/4 分辨率尺度 | +6.2% |
+| ③ | GhostNet 轻量骨干 | 骨干 Conv→GhostConv、C2f→C3Ghost | −22.4% |
 
 ## 目标功能
 
@@ -24,27 +32,31 @@
 
 ```text
 .
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── backend/
+├── .github/workflows/       CI（pytest）
+├── backend/                 FastAPI 主服务（健康检查，检测/知识接口陆续接入）
 │   └── app/
-│       ├── __init__.py
-│       ├── config.py
-│       ├── main.py
-│       └── core/
-│           ├── __init__.py
-│           └── logging.py
-├── docs/
-│   └── ROADMAP.md
-├── tests/
-│   └── test_health.py
+│       ├── config.py        集中配置（.env 覆盖）
+│       ├── main.py          应用入口
+│       └── core/logging.py  日志
+├── training/                检测模型训练（基线 / 三处改进 / 消融 / 推理）
+│   ├── scripts/             train.py · prepare_data.py · run_ablation.py · infer.py …
+│   ├── configs/             baseline.yaml · ablation_{p2,cbam,ghost,full}.yaml
+│   ├── models/              改进模型 yaml + CBAM 自定义模块
+│   └── weights/             yolov8n.pt（git 忽略，缺失自动镜像下载）
+├── knowledge/               图文双模态 RAG 知识库（bge-m3 + CLIP + ChromaDB）
+│   ├── config.py            全局配置
+│   ├── embedders.py         双编码器（文本 / 图像）
+│   ├── ingest.py            建库（分块 + 编码 + 入库）
+│   ├── retriever.py         融合检索（类别硬过滤 + 加权重排 + 类别投票）
+│   ├── generator.py         防治建议生成（Ollama + 降级）
+│   ├── api.py / cli.py      接口与命令行入口
+│   └── data/docs/           病害知识文档
+├── docs/ROADMAP.md          开发路线与验收清单
+├── tests/                   pytest 测试
 ├── .env.example
-├── .gitignore
 ├── pytest.ini
-├── requirements.txt
-├── requirements-dev.txt
-└── README.md
+├── requirements.txt         Web 基础依赖
+└── requirements-dev.txt     测试依赖
 ```
 
 ## 本地启动
