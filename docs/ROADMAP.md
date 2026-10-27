@@ -6,8 +6,9 @@
 
 - [x] 建立仓库说明与 Python 忽略规则
 - [x] 建立 FastAPI 最小应用和健康检查接口
-- [ ] 增加自动化测试与 CI
-- [ ] 补充环境变量示例与日志配置
+- [x] 增加自动化测试（pytest）与 CI（GitHub Actions）
+- [x] 补充环境变量示例（.env.example）与日志配置
+- [x] 配置集中化（backend/app/config.py）
 
 ## 阶段 2：病害检测
 

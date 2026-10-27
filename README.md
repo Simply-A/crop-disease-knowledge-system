@@ -24,14 +24,26 @@
 
 ```text
 .
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── backend/
 │   └── app/
 │       ├── __init__.py
-│       └── main.py
+│       ├── config.py
+│       ├── main.py
+│       └── core/
+│           ├── __init__.py
+│           └── logging.py
 ├── docs/
 │   └── ROADMAP.md
+├── tests/
+│   └── test_health.py
+├── .env.example
 ├── .gitignore
+├── pytest.ini
 ├── requirements.txt
+├── requirements-dev.txt
 └── README.md
 ```
 
@@ -49,6 +61,14 @@ python -m venv .venv
 source .venv/bin/activate
 
 python -m pip install -r requirements.txt
+
+# 开发/测试依赖
+python -m pip install -r requirements-dev.txt
+
+# 运行测试
+pytest
+
+# 启动服务
 uvicorn backend.app.main:app --reload
 ```
 
