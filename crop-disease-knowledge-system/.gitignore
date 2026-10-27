@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Data and model artifacts
+data/
+datasets/
+artifacts/
+runs/
+weights/
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Local vector stores / databases
+chroma_db/
+vector_store/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
