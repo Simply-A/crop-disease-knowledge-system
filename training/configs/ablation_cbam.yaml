@@ -1,0 +1,44 @@
+# 消融实验 A1：改进① CBAM 颈部注意力
+# 跑法：python training/scripts/train.py --config training/configs/ablation_cbam.yaml \
+#           --pretrained training/weights/yolov8n.pt
+model: training/models/yolov8n-cbam.yaml
+
+data: D:/bishu/datasets/tomato_det/yolo/data.yaml
+
+epochs: 100
+imgsz: 640
+batch: 16
+device: 0
+workers: 4
+patience: 30
+seed: 42
+amp: true
+cache: false
+
+optimizer: auto
+lr0: 0.01
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 10.0
+translate: 0.1
+scale: 0.5
+shear: 2.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+mosaic: 1.0
+mixup: 0.0
+copy_paste: 0.0
+
+project: D:/bishu/runs
+name: ablation_cbam
+exist_ok: false
+plots: true
+val: true
+save_period: -1

@@ -1,0 +1,49 @@
+# YOLOv8n + CBAM 颈部注意力（改进①）
+#
+# 在颈部 P3/P4/P5 三个检测尺度的特征之后各插入一个 CBAM 模块，
+# 对病斑区域做通道+空间双重注意力重加权，增强病斑响应、抑制背景。
+#
+# 说明：CBAM 为自定义模块，ultralytics 的 width 缩放不会作用于它，
+#       因此本 yaml 直接写死 n 规格（width=0.25, depth=0.33）的实际通道数，
+#       与官方 yolov8n 完全对齐，保证消融实验可比。
+#
+# 用法：python training/scripts/train.py --config training/configs/ablation_cbam.yaml \
+#           --model training/models/yolov8n-cbam.yaml --pretrained training/weights/yolov8n.pt
+
+nc: 80
+
+# 骨干（写死 n 规格通道：64→16, 128→32, 256→64, 512→128, 1024→256）
+backbone:
+  - [-1, 1, Conv, [16, 3, 2]]       # 0-P1/2
+  - [-1, 1, Conv, [32, 3, 2]]       # 1-P2/4
+  - [-1, 1, C2f, [32, True]]        # 2
+  - [-1, 1, Conv, [64, 3, 2]]       # 3-P3/8
+  - [-1, 2, C2f, [64, True]]        # 4  (P3)
+  - [-1, 1, Conv, [128, 3, 2]]      # 5-P4/16
+  - [-1, 2, C2f, [128, True]]       # 6  (P4)
+  - [-1, 1, Conv, [256, 3, 2]]      # 7-P5/32
+  - [-1, 1, C2f, [256, True]]       # 8  (P5)
+  - [-1, 1, SPPF, [256, 5]]         # 9
+
+# 颈部：在 P3/P4/P5 三个尺度特征后插入 CBAM
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]   # 10
+  - [[-1, 6], 1, Concat, [1]]                    # 11 cat P4
+  - [-1, 1, C2f, [128, False]]                   # 12 (P4)
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]   # 13
+  - [[-1, 4], 1, Concat, [1]]                    # 14 cat P3
+  - [-1, 1, C2f, [64, False]]                    # 15 (P3)
+  - [-1, 1, CBAM, [64]]                          # 16 CBAM@P3
+
+  - [-1, 1, Conv, [64, 3, 2]]                    # 17
+  - [[-1, 12], 1, Concat, [1]]                   # 18 cat P4
+  - [-1, 1, C2f, [128, False]]                   # 19 (P4)
+  - [-1, 1, CBAM, [128]]                         # 20 CBAM@P4
+
+  - [-1, 1, Conv, [128, 3, 2]]                   # 21
+  - [[-1, 9], 1, Concat, [1]]                    # 22 cat P5
+  - [-1, 1, C2f, [256, False]]                   # 23 (P5)
+  - [-1, 1, CBAM, [256]]                         # 24 CBAM@P5
+
+  - [[16, 20, 24], 1, Detect, [nc]]              # Detect(P3, P4, P5)

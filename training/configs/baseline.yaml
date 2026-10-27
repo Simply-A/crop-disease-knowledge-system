@@ -1,0 +1,52 @@
+# YOLOv8n 基线训练配置
+#
+# 用途：拿到第一个 mAP@0.5 数字，作为后续所有改进的对照零点。
+# 跑法：python code/scripts/train.py --config code/configs/baseline.yaml
+
+model: yolov8n.pt          # 已在 training/weights/ 下（缺失时自动走镜像下载）
+
+# 检测数据集 data.yaml（番茄田间病害集，7 类 / 689 张，CC BY 4.0）
+data: D:/bishu/datasets/tomato_det/yolo/data.yaml
+
+epochs: 100
+imgsz: 640
+batch: 16                  # RTX 4060 8GB：16 稳，报显存不足就降到 8
+device: 0                  # 0 = 第一块 GPU；写 cpu 会慢 30 倍
+workers: 4                 # Windows 上别超过 8，否则容易卡住
+patience: 30               # 30 轮没提升就早停
+seed: 42                   # 固定随机种子，保证消融实验可比
+amp: true                  # 混合精度，省显存提速
+cache: false               # 内存够（>16GB）可改 true
+
+optimizer: auto
+lr0: 0.01
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+
+# 数据增强（田间场景要开，否则模型只在白背景下work）
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 10.0
+translate: 0.1
+scale: 0.5
+shear: 2.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+mosaic: 1.0
+mixup: 0.0
+copy_paste: 0.0
+
+# 输出
+# 必须用**绝对路径**：写相对路径时 ultralytics 会再拼一层 <runs_dir>/<task>/，
+# 于是 "runs" 变成 "runs/detect/runs"（已经踩过一次）。
+# 放 D 盘是为了让实验产物不占 C 盘（C 盘余量比 D 盘紧）。
+project: D:/bishu/runs
+name: baseline_yolov8n
+exist_ok: false
+plots: true
+val: true
+save_period: -1
